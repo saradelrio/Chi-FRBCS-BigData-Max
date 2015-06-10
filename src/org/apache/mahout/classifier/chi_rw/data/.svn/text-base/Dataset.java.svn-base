@@ -29,6 +29,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
 import org.apache.mahout.classifier.chi_rw.Chi_RWUtils;
+import org.apache.mahout.classifier.chi_rwcs.DFUtils;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -383,13 +384,13 @@ public class Dataset implements Writable {
     nvalues = new double[nbAttributes][];
     for (int attr = 0; attr < nbAttributes; attr++) {
       if (attributes[attr].isNumerical()) {
-        nvalues[attr] = Chi_RWUtils.readDoubleArray(in);
+        nvalues[attr] = DFUtils.readDoubleArray(in);
       }
     }
     
     minmaxvalues = new double[nbAttributes][];
     for (int attr = 0; attr < nbAttributes; attr++) {      
-      minmaxvalues[attr] = Chi_RWUtils.readDoubleArray(in);      
+      minmaxvalues[attr] = DFUtils.readDoubleArray(in);      
     }
 
     labelId = in.readInt();
@@ -415,13 +416,13 @@ public class Dataset implements Writable {
     // only NUMERICAL attributes have values
     for (double[] vals : nvalues) {
       if (vals != null) {
-        Chi_RWUtils.writeArray(out, vals);
+    	DFUtils.writeArray(out, vals);
       }
     }
     
     for (double[] vals : minmaxvalues) {
       if (vals != null) {
-        Chi_RWUtils.writeArray(out, vals);
+      	DFUtils.writeArray(out, vals);
       }
     }
 

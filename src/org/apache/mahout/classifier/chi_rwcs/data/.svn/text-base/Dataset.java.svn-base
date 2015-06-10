@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.mahout.classifier.chi_rw.data;
+package org.apache.mahout.classifier.chi_rwcs.data;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Closeables;
@@ -28,7 +28,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
-import org.apache.mahout.classifier.chi_rw.Chi_RWUtils;
+import org.apache.mahout.classifier.chi_rwcs.Chi_RWCSUtils;
+import org.apache.mahout.classifier.chi_rwcs.DFUtils;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -135,18 +136,18 @@ public class Dataset implements Writable {
           attrs[attr] = Attribute.CATEGORICAL;
         }
       }
-      
+
       if (attrs[attr].isCategorical() || (!regression && attrs[attr].isLabel())) {
         this.values[ind] = new String[values[attr].size()];
         values[attr].toArray(this.values[ind]);
         this.minmaxvalues[ind][0] = 0;
         this.minmaxvalues[ind][1] = values[attr].size() - 1;
       }
-  
+    
       if(attrs[attr].isNumerical()){
-	    this.nvalues[ind] = new double[nvalues[attr].size()];    	
-	    this.nvalues[ind] = Doubles.toArray(nvalues[attr]);
-	    this.minmaxvalues[ind][0] = getMinAttribute(this.nvalues[ind]);
+  	    this.nvalues[ind] = new double[nvalues[attr].size()];    	
+  	    this.nvalues[ind] = Doubles.toArray(nvalues[attr]);
+  	    this.minmaxvalues[ind][0] = getMinAttribute(this.nvalues[ind]);
         this.minmaxvalues[ind][1] = getMaxAttribute(this.nvalues[ind]);
       }
 
@@ -187,7 +188,7 @@ public class Dataset implements Writable {
   public int nbValues(int attr) {
     return values[attr].length;
   }
-  
+
   public String[] getValues(int attr) {
     return values[attr];
   }
@@ -195,7 +196,7 @@ public class Dataset implements Writable {
   public double[] getNValues(int attr) {
 	return nvalues[attr];
   }
-
+  
   public String[] labels() {
     return Arrays.copyOf(values[labelId], nblabels());
   }
@@ -274,6 +275,7 @@ public class Dataset implements Writable {
 
   private static void validateValues(Attribute[] attrs, List<String>[] values, ArrayList<Double>[] nvalues) {
     Preconditions.checkArgument(attrs.length == values.length, "attrs.length != values.length");
+    Preconditions.checkArgument(attrs.length == nvalues.length, "attrs.length != nvalues.length");
     for (int attr = 0; attr < attrs.length; attr++) {
       Preconditions.checkArgument(!attrs[attr].isCategorical() || values[attr] != null,
           "values not found for attribute " + attr);
@@ -369,7 +371,7 @@ public class Dataset implements Writable {
       attributes[attr] = Attribute.valueOf(name);
     }
 
-    ignored = Chi_RWUtils.readIntArray(in);
+    ignored = Chi_RWCSUtils.readIntArray(in);
 
     // only CATEGORICAL attributes have values
     values = new String[nbAttributes][];
@@ -383,13 +385,13 @@ public class Dataset implements Writable {
     nvalues = new double[nbAttributes][];
     for (int attr = 0; attr < nbAttributes; attr++) {
       if (attributes[attr].isNumerical()) {
-        nvalues[attr] = Chi_RWUtils.readDoubleArray(in);
+        nvalues[attr] = DFUtils.readDoubleArray(in);
       }
     }
     
     minmaxvalues = new double[nbAttributes][];
     for (int attr = 0; attr < nbAttributes; attr++) {      
-      minmaxvalues[attr] = Chi_RWUtils.readDoubleArray(in);      
+      minmaxvalues[attr] = DFUtils.readDoubleArray(in);      
     }
 
     labelId = in.readInt();
@@ -403,7 +405,7 @@ public class Dataset implements Writable {
       WritableUtils.writeString(out, attr.name());
     }
 
-    Chi_RWUtils.writeArray(out, ignored);
+    Chi_RWCSUtils.writeArray(out, ignored);
 
     // only CATEGORICAL attributes have values
     for (String[] vals : values) {
@@ -415,13 +417,13 @@ public class Dataset implements Writable {
     // only NUMERICAL attributes have values
     for (double[] vals : nvalues) {
       if (vals != null) {
-        Chi_RWUtils.writeArray(out, vals);
+    	DFUtils.writeArray(out, vals);
       }
     }
     
     for (double[] vals : minmaxvalues) {
       if (vals != null) {
-        Chi_RWUtils.writeArray(out, vals);
+      	DFUtils.writeArray(out, vals);
       }
     }
 
