@@ -13,5 +13,5 @@ Figure 2: flowchart of how the classification of a big dataset is organized in C
 
 # References
 
-S. Río, V. López, J.M. Benítez, F. Herrera. A MapReduce Approach to Address Big Data Classification Problems Based on the Fusion of Linguistic Fuzzy Rules. International Journal of Computational Intelligence Systems 8:3 (2015) 422-437. doi: 10.1080/18756891.2015.1017377 
+S. Río, V. López, J.M. Benítez, F. Herrera. *A MapReduce Approach to Address Big Data Classification Problems Based on the Fusion of Linguistic Fuzzy Rules*. International Journal of Computational Intelligence Systems 8:3 (2015) 422-437. doi: 10.1080/18756891.2015.1017377 
 [link to pdf file](http://sci2s.ugr.es/sites/default/files/ficherosPublicaciones/1860_delRio-lopez-benitez-herrera-Chi-FRBCS-MapReduce.pdf)
